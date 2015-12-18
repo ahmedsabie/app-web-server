@@ -422,12 +422,16 @@ def change_pass(request):
         retval = check(request)
         if retval <> None:
             return retval
-        if "pass" not in request.REQUEST.keys() or "oldpass" not in request.REQUEST.keys():
+        if "passconfirm" not in request.REQUEST.keys() or "pass" not in request.REQUEST.keys() or "oldpass" not in request.REQUEST.keys():
             return HttpResponse(jinja_environ.get_template('notice.html').render({"pcuser":request.user.pcuser,
                                                                                   "text":'Invalid Request.', "text1":'Please go back or click here to go to the homepage',"link":'/'}))
         if not request.user.check_password(request.REQUEST['oldpass']):
             return HttpResponse(jinja_environ.get_template('notice.html').render({"pcuser":request.user.pcuser,
                                                                                   "text":'Invalid Old Password.',"text1":'Click here to go to the homepage',"link":'/'}))
+        if request.REQUEST['passconfirm'] <> request.REQUEST['pass']:
+            return HttpResponse(jinja_environ.get_template('notice.html').render({"pcuser":request.user.pcuser,
+                                                                                  "text":'Passwords dont match.', "text1":'Please go back or click here to go to the homepage',"link":'/'}))
+
         request.user.set_password(request.REQUEST['pass'])
         request.user.save()
         logout(request)
