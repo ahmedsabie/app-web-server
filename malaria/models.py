@@ -15,7 +15,7 @@ class Post(models.Model):
     description_post = models.CharField(max_length=5000,
                                         validators=[
                                             RegexValidator(
-                                                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(:)]+$'
+                                                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(:)|(\')]+$'
                                             )]
                                         )
     # link to important documents
