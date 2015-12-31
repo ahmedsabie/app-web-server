@@ -14,6 +14,7 @@ from webhub import xlrd
 from webhub.checker import check
 from webhub.models import *
 from webhub.serializers import *
+from webhub.services import *
 
 
 # SMTP port for sending emails
@@ -305,15 +306,39 @@ def edit_profile(request):
     
     
     
+    gender = request.REQUEST['gender']
+    phone = request.REQUEST['phone']
+    email = request.REQUEST['email']
+    location = request.REQUEST['location']
+    first_name = request.REQUEST['first_name']
+    last_name = request.REQUEST['last_name']
     
     
-    
-    request.user.pcuser.gender = request.REQUEST['gender']
-    request.user.pcuser.phone = request.REQUEST['phone']
-    request.user.pcuser.email = request.REQUEST['email']
-    request.user.pcuser.location = request.REQUEST['location']
-    request.user.first_name = request.REQUEST['first_name']
-    request.user.last_name = request.REQUEST['last_name']
+    if not gender_is_valid(gender):
+        return HttpResponse(jinja_environ.get_template('notice.html').render({"pcuser":None,
+                                                                            "text":'Please enter "male" or "female" for gender',"text1":'<p>Go back or click here to return to home page</p>',"link":'/'}))
+    if not phone_is_valid(phone):
+        return HttpResponse(jinja_environ.get_template('notice.html').render({"pcuser":None,
+                                                                            "text":'Please enter a valid phone number',"text1":'<p>Go back or click here to return to home page</p>',"link":'/'}))
+    if not email_is_valid(email):
+        return HttpResponse(jinja_environ.get_template('notice.html').render({"pcuser":None,
+                                                                            "text":'Please enter a valid email',"text1":'<p>Go back or click here to return to home page</p>',"link":'/'}))
+    if not location_is_valid(location):
+        return HttpResponse(jinja_environ.get_template('notice.html').render({"pcuser":None,
+                                                                            "text":'Location name is too long!',"text1":'<p>Go back or click here to return to home page</p>',"link":'/'}))
+    if not name_is_valid(first_name):
+        return HttpResponse(jinja_environ.get_template('notice.html').render({"pcuser":None,
+                                                                            "text":'First name is too long!',"text1":'<p>Go back or click here to return to home page</p>',"link":'/'}))
+    if not name_is_valid(last_name):
+        return HttpResponse(jinja_environ.get_template('notice.html').render({"pcuser":None,
+                                                                            "text":'Last name is too long!',"text1":'<p>Go back or click here to return to home page</p>',"link":'/'}))
+
+    request.user.pcuser.gender = gender
+    request.user.pcuser.phone = phone
+    request.user.pcuser.email = email
+    request.user.pcuser.location = location
+    request.user.first_name = first_name
+    request.user.last_name = last_name
     
     request.user.pcuser.save()
     
@@ -466,4 +491,5 @@ def testDB(request):
     no = book.nsheets
     
     return HttpResponse(jinja_environ.get_template('test.html').render({"pcuser":None, "no":no}))  
+
 
