@@ -282,7 +282,9 @@ def edit_profile(request):
     if not request.user.is_authenticated():
         return HttpResponse(jinja_environ.get_template('index.html').render({"pcuser":None}))
 
-    
+    if 'cancel' in request.POST.keys():
+        return HttpResponse(jinja_environ.get_template('profile.html').render({"pcuser":request.user.pcuser, "profiler":request.user.pcuser}))
+
     #To remove profile picture
     if 'reset_image' in request.REQUEST.keys():
         request.user.pcuser.image = "http://vfcstatic.r.worldssl.net/assets/car_icon-e0df962a717a5db6ebc8b37e80b05713.png"
